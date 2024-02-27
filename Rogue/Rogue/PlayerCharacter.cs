@@ -52,7 +52,7 @@ namespace Rogue
             position.y += y_move;
             NextPosition = position.x + position.y * MapWidth;
             Numero = Map[NextPosition];
-            if (Numero != 2)
+            if (Numero != 2 && Numero != 4 && Numero != 3)
             {
 
                 LastPosition.x = position.x - x_move;
@@ -64,6 +64,11 @@ namespace Rogue
                 Console.Write(" ");
 
 
+            }
+            else
+            {
+                position.x -= x_move;
+                position.y -= y_move;
             }
         }
 

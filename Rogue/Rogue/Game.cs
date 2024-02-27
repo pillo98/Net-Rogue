@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -107,93 +109,66 @@ namespace Rogue
     }
     class PlayGame
     {
+        public Map Level01;
         public void Run()
         {
 
 
             // Prepare to show game
             Console.CursorVisible = false;
-
         
 
             // Create player
             PlayerCharacter player = new PlayerCharacter('@', ConsoleColor.Green);
-            player.position = new Point2D(Console.WindowWidth / 2, Console.WindowHeight / 2);
+            MapLoader mapLoader = new MapLoader();
+            player.position = new Point2D(1,1);
             player.Draw();
             bool game_running = true;
+            MapLoader loader = new MapLoader();
+            Level01 = loader.LoadTestMap();
+            Map map = new Map();
+            player.Map = Level01.mapTiles;
+            player.MapWidth = Level01.mapWidth;
 
             while (game_running)
             {
                 player.Draw();
-                int mapWidth = 8;
-                int[] mapTiles = new int[] {
-                2, 3, 3, 3, 3, 3, 3, 2,
-                4, 1, 1, 2, 1, 1, 1, 4,
-                4, 1, 1, 2, 1, 1, 1, 4,
-                4, 1, 1, 1, 1, 1, 2, 4,
-                4, 2, 2, 2, 1, 1, 1, 4,
-                4, 1, 1, 1, 1, 1, 1, 4,
-                2, 3, 3, 3, 3, 3, 3, 2,
-                };
-                Console.ForegroundColor = ConsoleColor.Gray;
-                int map_start_row = 10;
-                int map_start_col = 55;
-                player.Map = mapTiles;
-                player.MapWidth = mapWidth;
-                for (int row = 0; row < mapTiles.Length / mapWidth; row++)
-                {
-                    for (int col = 0; col < mapWidth; col++)
-                    {
-                        int tileId = mapTiles[row * mapWidth + col];
-                        Console.SetCursorPosition(map_start_col + col, map_start_row + row);
-
-                        switch (tileId)
-                        {
-                            case 1:
-                                Console.Write(".");
-                                break;
-                            case 2:
-                                Console.Write("#");
-                                break;
-                            case 3:
-                                Console.Write("═");
-                                break;
-                            case 4:
-                                Console.Write("║");
-                                break;
-                            default:
-                                Console.Write(" ");
-                                break;
-                        }
-                    }
-                }
+                Level01.DrawMap();
                 player.Draw();
                 ConsoleKeyInfo key = Console.ReadKey();
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
                         player.Move(0, -1);
+                        player.Draw();
                         break;
                     case ConsoleKey.DownArrow:
                         player.Move(0, 1);
+                        player.Draw();
                         break;
                     case ConsoleKey.LeftArrow:
                         player.Move(-1, 0);
+                        player.Draw();
                         break;
                     case ConsoleKey.RightArrow:
                         player.Move(1, 0);
+                        player.Draw();
                         break;
                     case ConsoleKey.Home:
                         player.Move(-1, -1);
+                        player.Draw();
                         break;
                     case ConsoleKey.PageUp:
                         player.Move(1, -1);
+                        player.Draw();
                         break;
                     case ConsoleKey.PageDown:
                         player.Move(1, 1);
+                        player.Draw();
                         break;
                     case ConsoleKey.End:
                         player.Move(-1, 1);
+                        player.Draw();
                         break;
 
                     case ConsoleKey.Escape:
@@ -203,7 +178,6 @@ namespace Rogue
                     default:
                         break;
                 };
-                player.Draw();
             }
         }
     }
