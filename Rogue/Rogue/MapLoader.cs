@@ -63,7 +63,7 @@ namespace Rogue
                 fileContents = reader.ReadToEnd();
             }
 
-            Map loadedMap = JsonConvert.DeserializeObject(fileContents);
+            Map loadedMap = JsonConvert.DeserializeObject<Map>(fileContents);
 
             return loadedMap;
         }
