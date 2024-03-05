@@ -109,7 +109,7 @@ namespace Rogue
     }
     class PlayGame
     {
-        public Map Level01;
+        public MapS Level01;
         public void Run()
         {
 
@@ -121,19 +121,21 @@ namespace Rogue
             // Create player
             PlayerCharacter player = new PlayerCharacter('@', ConsoleColor.Green);
             MapLoader mapLoader = new MapLoader();
+            
             player.position = new Point2D(1,1);
             player.Draw();
             bool game_running = true;
             MapLoader loader = new MapLoader();
             Level01 = loader.LoadMapFromFile("Maps/mapfile.json");
-            Map map = new Map();
-            player.Map = Level01.mapTiles;
+            MapS map = new MapS();
+            player.Map = Level01.layers[0].mapTiles;
             player.MapWidth = Level01.mapWidth;
 
             while (game_running)
             {
-                player.Draw();
                 Level01.DrawMap();
+                Level01.DrawEnemies();
+                Level01.DrawItems();
                 player.Draw();
                 ConsoleKeyInfo key = Console.ReadKey();
                 switch (key.Key)

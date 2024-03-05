@@ -12,18 +12,18 @@ namespace Rogue
     internal class MapLoader
     {
 
-        public Map LoadTestMap()
+        public MapS LoadTestMap()
         { 
-            Map test = new Map();
+            MapS test = new MapS();
             test.mapWidth = 8;
-            test.mapTiles = new int[] {
-                2, 3, 3, 3, 3, 3, 3, 2,
-                4, 1, 1, 2, 1, 1, 1, 4,
-                4, 1, 1, 2, 1, 1, 1, 4,
-                4, 1, 1, 1, 1, 1, 2, 4,
-                4, 2, 2, 2, 1, 1, 1, 4,
-                4, 1, 1, 1, 1, 1, 1, 4,
-                2, 3, 3, 3, 3, 3, 3, 2 };
+            test.layers[1].mapTiles = new int[] {
+            2, 2, 2, 2, 2, 2, 2, 2,
+            2, 1, 1, 2, 1, 1, 1, 2,
+            2, 1, 1, 2, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 2, 2,
+            2, 2, 2, 2, 1, 1, 1, 2,
+            2, 1, 1, 1, 1, 1, 1, 2,
+            2, 2, 2, 2, 2, 2, 2, 2 };
             return test;
 
         }
@@ -47,7 +47,7 @@ namespace Rogue
             }
         }
         
-        public Map LoadMapFromFile(string filename) 
+        public MapS LoadMapFromFile(string filename) 
         {
             bool fileFound = File.Exists(filename);
             if (fileFound == false)
@@ -55,17 +55,11 @@ namespace Rogue
                 Console.WriteLine($"File {filename} not found");
                 return LoadTestMap(); // Return the test map as fallback
             }
-
-            string fileContents;
-
             using (StreamReader reader = File.OpenText(filename))
             {
-                fileContents = reader.ReadToEnd();
+                var fileContents = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject<MapS>(fileContents);
             }
-
-            Map loadedMap = JsonConvert.DeserializeObject<Map>(fileContents);
-
-            return loadedMap;
         }
     }
 }
