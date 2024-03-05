@@ -49,6 +49,7 @@ namespace Rogue
         
         public MapS LoadMapFromFile(string filename) 
         {
+            MapS map = new MapS();
             bool fileFound = File.Exists(filename);
             if (fileFound == false)
             {

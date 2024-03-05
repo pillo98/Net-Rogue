@@ -127,7 +127,6 @@ namespace Rogue
             bool game_running = true;
             MapLoader loader = new MapLoader();
             Level01 = loader.LoadMapFromFile("Maps/mapfile.json");
-            MapS map = new MapS();
             player.Map = Level01.layers[0].mapTiles;
             player.MapWidth = Level01.mapWidth;
 

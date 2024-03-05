@@ -77,7 +77,7 @@ namespace Rogue
         }
         public void DrawEnemies()
         {
-            MapLayer enemyLayer = Level.layers[2];
+            MapLayer enemyLayer = layers[2];
 
             int[] enemyTiles = enemyLayer.mapTiles;
             int mapHeight = enemyTiles.Length / mapWidth;
