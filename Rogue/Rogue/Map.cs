@@ -21,10 +21,12 @@ namespace Rogue
         {
             public string name;
             public Point2D position;
-            public Enemy(string pname, Point2D pposition)
+            public Texture EnemySprite;
+            public Enemy(string pname, Point2D pposition, Texture Sprite)
             {
                 this.name = pname;
                 this.position = pposition;
+                this.EnemySprite = Sprite;
             }
 
         }
@@ -172,6 +174,7 @@ namespace Rogue
 
             int[] enemyTiles = enemyLayer.mapTiles;
             int mapHeight = enemyTiles.Length / mapWidth;
+            Texture enemy_image = Raylib.LoadTexture("Images/.png");
             for (int y = 0; y < mapHeight; y++)
             {
                 for (int x = 0; x < mapWidth; x++)
@@ -185,16 +188,16 @@ namespace Rogue
                             // ei mitään tässä kohtaa
                             break;
                         case 1:
-                            enemies.Add(new Enemy("Orc", position));
+                            enemies.Add(new Enemy("Orc", position, enemy_image));
                             break;
                         case 2:
-                            enemies.Add(new Enemy("Goblin", position));
+                            enemies.Add(new Enemy("Goblin", position, enemy_image));
                             break;
                         case 3:
-                            enemies.Add(new Enemy("Wraith", position));
+                            enemies.Add(new Enemy("Wraith", position, enemy_image));
                             break;
                         case 4:
-                            enemies.Add(new Enemy("Bandit", position));
+                            enemies.Add(new Enemy("Bandit", position, enemy_image));
                             break;
                     }
                 }
