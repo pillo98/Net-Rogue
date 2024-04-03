@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using ZeroElectric.Vinculum;
 
 namespace Rogue
 {
@@ -57,23 +58,30 @@ namespace Rogue
                     switch (tileId)
                     {
                         case 1:
-                            Console.Write(".");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($".", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 2:
-                            Console.Write("#");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"#", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 3:
-                            Console.Write("═");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"═", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 4:
-                            Console.Write("║");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"║", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         default:
-                            Console.Write(" ");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($" ", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                     }
                 }
             }
+            DrawEnemies();
+            DrawItems();
         }
         public void DrawEnemies()
         {
@@ -92,16 +100,20 @@ namespace Rogue
                     switch (tileId)
                     {
                         case 1:
-                            Console.Write("%");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"%", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 2:
-                            Console.Write("%");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"%", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 3:
-                            Console.Write("%");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"%", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 4:
-                            Console.Write("%");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"%", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         default:
                             //nothing
@@ -128,16 +140,20 @@ namespace Rogue
                     switch (tileId)
                     {
                         case 1:
-                            Console.Write("$");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"$", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 2:
-                            Console.Write("$");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"$", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 3:
-                            Console.Write("$");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"$", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         case 4:
-                            Console.Write("$");
+                            Raylib.DrawRectangle(x * Game.tileSize, y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                            Raylib.DrawText($"$", x * Game.tileSize, y * Game.tileSize, Game.tileSize, Raylib.WHITE);
                             break;
                         default:
                             //nothing

@@ -11,12 +11,11 @@ namespace Rogue
 {
     internal class MapLoader
     {
-
         public MapS LoadTestMap()
-        { 
+        {
             MapS test = new MapS();
             test.mapWidth = 8;
-            test.layers[1].mapTiles = new int[] {
+            test.layers[0].mapTiles = new int[] {
             2, 2, 2, 2, 2, 2, 2, 2,
             2, 1, 1, 2, 1, 1, 1, 2,
             2, 1, 1, 2, 1, 1, 1, 2,
@@ -27,6 +26,7 @@ namespace Rogue
             return test;
 
         }
+
         public void TestFileReading (string filename)
         {
             using (StreamReader reader = File.OpenText(filename))

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using ZeroElectric.Vinculum;
 
 namespace Rogue
 {
@@ -23,14 +14,13 @@ namespace Rogue
         Warrior,
         Mage
     }
-    internal class PlayerCharacterS
+
+    public class PlayerCharacter
     {
         public string name;
         public Race race;
         public Class Role;
-    }
-    public class PlayerCharacter
-    {
+
         public Point2D position;
         public Point2D LastPosition;
         public int NextPosition;
@@ -39,9 +29,9 @@ namespace Rogue
         public int MapWidth;
 
         private char image;
-        private ConsoleColor color;
+        private Color color;
 
-        public PlayerCharacter(char image, ConsoleColor color)
+        public PlayerCharacter(char image, Color color)
         {
             this.image = image;
             this.color = color;
@@ -61,7 +51,8 @@ namespace Rogue
                 position.y = Math.Clamp(position.y, 0, Console.WindowHeight - 1);
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.SetCursorPosition(LastPosition.x, LastPosition.y);
-                Console.Write(" ");
+                Raylib.DrawRectangle(LastPosition.x * Game.tileSize, LastPosition.y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+                Raylib.DrawText($" ", LastPosition.x * Game.tileSize, LastPosition.y * Game.tileSize, Game.tileSize, color);
 
 
             }
@@ -74,9 +65,9 @@ namespace Rogue
 
         public void Draw()
         {
-            Console.ForegroundColor = color;
             Console.SetCursorPosition(position.x, position.y);
-            Console.Write(image);
+            Raylib.DrawRectangle(position.x * Game.tileSize, position.y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
+            Raylib.DrawText($"{image}", position.x * Game.tileSize, position.y * Game.tileSize, Game.tileSize, color);
 
 
         }

@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Numerics;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Threading;
+using ZeroElectric.Vinculum;
 
 namespace Rogue
 {
-    internal class Game
+    public class Game
     {
-        public void Run()
+        PlayerCharacter player;
+        MapS level01;
+        public static readonly int tileSize = 16;
+
+        private string AskName()
         {
-            PlayerCharacterS player = new PlayerCharacterS();
+
             while (true)
             {
                 Console.WriteLine("What is your name?");
@@ -33,19 +28,21 @@ namespace Rogue
                     if (Char.IsLetter(kirjain) == false)
                     {
                         nameOK = false;
-                        player.name = name;
-                        break;
+                        
 
                     }
                 }
-                if (nameOK == false) 
+                if (nameOK == false)
                 {
                     Console.WriteLine("Name can only contain letters!");
                     continue;
                 }
-                break;
+                return name;
             }
+        }
 
+        private Race AskRace()
+        {
             while (true)
             {
                 Console.WriteLine("Select race");
@@ -55,18 +52,15 @@ namespace Rogue
                 string race = Console.ReadLine();
                 if (race == Race.Human.ToString())
                 {
-                    player.race = Race.Human;
-                    break;
+                    return Race.Human;
                 }
                 else if (race == Race.Elf.ToString())
                 {
-                    player.race = Race.Elf;
-                    break;
+                    return Race.Elf;
                 }
                 else if (race == Race.Orc.ToString())
                 {
-                    player.race = Race.Orc;
-                    break;
+                    return Race.Orc;
                 }
                 else
                 {
@@ -74,6 +68,10 @@ namespace Rogue
                     continue;
                 }
             }
+        }
+
+        private Class AskRole() 
+        {
             while (true)
             {
 
@@ -85,18 +83,15 @@ namespace Rogue
                 string Role = Console.ReadLine();
                 if (Role == Class.Rogue.ToString())
                 {
-                    player.Role = Class.Rogue;
-                    break;
+                    return Class.Rogue;
                 }
                 else if (Role == Class.Warrior.ToString())
                 {
-                    player.Role = Class.Warrior;
-                    break;
+                    return Class.Warrior;
                 }
                 else if (Role == Class.Mage.ToString())
                 {
-                    player.Role = Class.Mage;
-                    break;
+                    return Class.Mage;
                 }
                 else
                 {
@@ -104,82 +99,97 @@ namespace Rogue
                     continue;
                 }
             }
-
         }
-    }
-    class PlayGame
-    {
-        public MapS Level01;
+
+        private PlayerCharacter CreateCharacter() 
+        {
+            PlayerCharacter player = new PlayerCharacter('@', Raylib.GREEN);
+            player.name = AskName();
+            player.race = AskRace();
+            player.Role = AskRole();
+            return player;
+        }
+
         public void Run()
         {
+            Console.Clear();
+            Init();
+            GameLoop();
+        }
 
-
-            // Prepare to show game
-            Console.CursorVisible = false;
-        
-
-            // Create player
-            PlayerCharacter player = new PlayerCharacter('@', ConsoleColor.Green);
-            MapLoader mapLoader = new MapLoader();
-            
-            player.position = new Point2D(1,1);
-            player.Draw();
-            bool game_running = true;
+        private void Init()
+        {
+            player = CreateCharacter();
             MapLoader loader = new MapLoader();
-            Level01 = loader.LoadMapFromFile("Maps/mapfile.json");
-            player.Map = Level01.layers[0].mapTiles;
-            player.MapWidth = Level01.mapWidth;
+            level01 = loader.LoadMapFromFile("Maps/mapfile.json");
+            player.Map = level01.layers[0].mapTiles;
+            player.MapWidth = level01.mapWidth;
+            player.position = new Point2D(1, 1);
+            Console.Clear();
+            Raylib.InitWindow(480, 270, "Rogue");
+            Raylib.SetTargetFPS(30);
+        }
 
-            while (game_running)
+        private void DrawGame()
+        {
+            Raylib.BeginDrawing();
+
+            level01.DrawMap();
+            player.Draw();
+
+            Raylib.EndDrawing();
+        }
+
+        private void UpdateGame()
+        {
+            Console.CursorVisible = false;
+            if (Console.KeyAvailable == false)
             {
-                Level01.DrawMap();
-                Level01.DrawEnemies();
-                Level01.DrawItems();
-                player.Draw();
-                ConsoleKeyInfo key = Console.ReadKey();
-                switch (key.Key)
-                {
+                System.Threading.Thread.Sleep(33);
+                return;
+            }
+
+               ConsoleKeyInfo key = Console.ReadKey();
+               switch (key.Key)
+               {
                     case ConsoleKey.UpArrow:
                         player.Move(0, -1);
-                        player.Draw();
                         break;
                     case ConsoleKey.DownArrow:
                         player.Move(0, 1);
-                        player.Draw();
                         break;
                     case ConsoleKey.LeftArrow:
                         player.Move(-1, 0);
-                        player.Draw();
                         break;
                     case ConsoleKey.RightArrow:
                         player.Move(1, 0);
-                        player.Draw();
                         break;
                     case ConsoleKey.Home:
                         player.Move(-1, -1);
-                        player.Draw();
                         break;
                     case ConsoleKey.PageUp:
                         player.Move(1, -1);
-                        player.Draw();
                         break;
                     case ConsoleKey.PageDown:
                         player.Move(1, 1);
-                        player.Draw();
                         break;
                     case ConsoleKey.End:
                         player.Move(-1, 1);
-                        player.Draw();
-                        break;
-
-                    case ConsoleKey.Escape:
-                        game_running = false;
                         break;
 
                     default:
                         break;
-                };
+               };
+        }
+        private void GameLoop()
+        {
+            while (true)
+            {
+                UpdateGame();
+                DrawGame();
+
             }
+
         }
     }
 

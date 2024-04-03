@@ -12,13 +12,12 @@ namespace Rogue
         {
 
             
-            Game rogue = new Game();
-            rogue.Run();
+
             Console.Clear();
             while (true)
             {
-                PlayGame Game = new PlayGame();
-                Game.Run();
+                Game rogue = new Game();
+                rogue.Run();
             }
 
         }
