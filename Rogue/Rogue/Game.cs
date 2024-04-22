@@ -12,11 +12,10 @@ namespace Rogue
         PlayerCharacter player;
         MapS level01;
         public static readonly int tileSize = 16;
-
         int game_width;
         int game_height;
         RenderTexture game_screen;
-
+        public static Texture atlasImage;
         private string AskName()
         {
 
@@ -111,7 +110,7 @@ namespace Rogue
 
         private PlayerCharacter CreateCharacter() 
         {
-            PlayerCharacter player = new PlayerCharacter('@', Raylib.GREEN);
+            PlayerCharacter player = new PlayerCharacter();
             player.name = AskName();
             player.race = AskRace();
             player.Role = AskRole();
@@ -140,6 +139,10 @@ namespace Rogue
             Raylib.InitWindow(screen_width, screen_height, "Rogue");
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
 
+            atlasImage = Raylib.LoadTexture("Images/MAP.png");
+
+            player.SetImageAndIndex(atlasImage, 12, 96);
+
             game_width = 480;
             game_height = 270;
 
@@ -166,6 +169,7 @@ namespace Rogue
             Raylib.EndTextureMode();
             DrawGameScaled();
 
+
         }
 
         private void UpdateGame()
@@ -173,41 +177,26 @@ namespace Rogue
             Console.CursorVisible = false;
             if (Console.KeyAvailable == false)
             {
-                System.Threading.Thread.Sleep(33);
-                return;
+                Thread.Sleep(33);
             }
 
-               ConsoleKeyInfo key = Console.ReadKey();
-               switch (key.Key)
-               {
-                    case ConsoleKey.UpArrow:
-                        player.Move(0, -1);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        player.Move(0, 1);
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        player.Move(-1, 0);
-                        break;
-                    case ConsoleKey.RightArrow:
-                        player.Move(1, 0);
-                        break;
-                    case ConsoleKey.Home:
-                        player.Move(-1, -1);
-                        break;
-                    case ConsoleKey.PageUp:
-                        player.Move(1, -1);
-                        break;
-                    case ConsoleKey.PageDown:
-                        player.Move(1, 1);
-                        break;
-                    case ConsoleKey.End:
-                        player.Move(-1, 1);
-                        break;
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
+            {
+                player.Move(0, -1);
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
+            {
+                player.Move(0, 1);
+            }
 
-                    default:
-                        break;
-               };
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
+            {
+                player.Move(1, 0);
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
+            {
+                player.Move(-1, 0);
+            }
         }
 
         private void GameLoop()

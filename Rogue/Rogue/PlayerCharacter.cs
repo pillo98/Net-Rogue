@@ -1,4 +1,5 @@
-﻿using ZeroElectric.Vinculum;
+﻿using System.Numerics;
+using ZeroElectric.Vinculum;
 
 namespace Rogue
 {
@@ -14,7 +15,6 @@ namespace Rogue
         Warrior,
         Mage
     }
-
     public class PlayerCharacter
     {
         public string name;
@@ -28,21 +28,17 @@ namespace Rogue
         public int Numero;
         public int MapWidth;
 
-        private char image;
-        private Color color;
-
-        public PlayerCharacter(char image, Color color)
-        {
-            this.image = image;
-            this.color = color;
-        }
+        public Texture image;
+        float imagePixelX;
+        float imagePixelY;
+        Rectangle imageRect;
         public void Move(int x_move, int y_move)
         {
             position.x += x_move;
             position.y += y_move;
             NextPosition = position.x + position.y * MapWidth;
             Numero = Map[NextPosition];
-            if (Numero != 2 && Numero != 4 && Numero != 3)
+            if (Numero == 5)
             {
 
                 LastPosition.x = position.x - x_move;
@@ -50,9 +46,7 @@ namespace Rogue
                 position.x = Math.Clamp(position.x, 0, Console.WindowWidth - 1);
                 position.y = Math.Clamp(position.y, 0, Console.WindowHeight - 1);
                 Console.BackgroundColor = ConsoleColor.Black;
-                Console.SetCursorPosition(LastPosition.x, LastPosition.y);
-                Raylib.DrawRectangle(LastPosition.x * Game.tileSize, LastPosition.y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
-                Raylib.DrawText($" ", LastPosition.x * Game.tileSize, LastPosition.y * Game.tileSize, Game.tileSize, color);
+
 
 
             }
@@ -65,11 +59,19 @@ namespace Rogue
 
         public void Draw()
         {
-            Console.SetCursorPosition(position.x, position.y);
-            Raylib.DrawRectangle(position.x * Game.tileSize, position.y * Game.tileSize, Game.tileSize, Game.tileSize, Raylib.GRAY);
-            Raylib.DrawText($"{image}", position.x * Game.tileSize, position.y * Game.tileSize, Game.tileSize, color);
+            Vector2 vector = new Vector2 (position.x, position.y);
+            Raylib.DrawTextureRec(image, imageRect, vector * Game.tileSize, Raylib.WHITE);
 
+        }
 
+        public void SetImageAndIndex(Texture atlasImage, int imagesPerRow, int index)
+        {
+            float tileSize = 17.2f;
+            image = atlasImage;
+            imagePixelX = (index % imagesPerRow) * tileSize;
+            imagePixelY = (int)(index / imagesPerRow) * tileSize;
+
+            imageRect = new Rectangle(imagePixelX, imagePixelY, Game.tileSize, Game.tileSize);
         }
     }
 }
