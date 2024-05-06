@@ -25,9 +25,20 @@
     <None Update="Images\Tree1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Maps\mapfile.json">
+    <None Update="mapfile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="RogueTiledMap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Maps\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TurboMapReader\TurboMapReader.csproj" />
   </ItemGroup>
 
 </Project>

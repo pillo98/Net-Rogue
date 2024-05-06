@@ -56,7 +56,6 @@ namespace Rogue
                 position.y -= y_move;
             }
         }
-
         public void Draw()
         {
             Vector2 vector = new Vector2 (position.x, position.y);
@@ -66,7 +65,7 @@ namespace Rogue
 
         public void SetImageAndIndex(Texture atlasImage, int imagesPerRow, int index)
         {
-            float tileSize = 17.2f;
+            float tileSize = 16f;
             image = atlasImage;
             imagePixelX = (index % imagesPerRow) * tileSize;
             imagePixelY = (int)(index / imagesPerRow) * tileSize;

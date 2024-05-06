@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZeroElectric.Vinculum;
 using static System.Net.Mime.MediaTypeNames;
+using TurboMapReader;
 
 namespace Rogue
 {
@@ -23,8 +24,8 @@ namespace Rogue
         }
 
 
-        List<Enemy> enemies;
-        List<Item> items;
+        List<Enemy>? enemies;
+        List<Item>? items;
 
         public Tile Floor;
         public Tile Wall;
@@ -64,7 +65,7 @@ namespace Rogue
         }
         public Tile SetImageAndIndex(Tile tile, int index)
         {
-            float tileSize = 17.2f;
+            float tileSize = 16f;
             tile.Image = Game.atlasImage;
             tile.index = index;
             tile.imagePixelX = (tile.index % 12) * tileSize;
@@ -73,6 +74,8 @@ namespace Rogue
             tile.imageRect = new Rectangle(tile.imagePixelX, tile.imagePixelY, Game.tileSize, Game.tileSize);
             return tile;
         }
+
+
         public void DrawMap()
         {
             
@@ -106,7 +109,7 @@ namespace Rogue
         public void DrawEnemy(Texture Sprite, Point2D position)
         {
             int imagesPerRow = 12;
-            float tileSize = 16.9f;
+            float tileSize = 16;
             
             int atlasIndex = 0 + 10 * imagesPerRow;
 
@@ -127,7 +130,7 @@ namespace Rogue
         public void DrawItem(Texture Sprite, Point2D position)
         {
             int imagesPerRow = 12;
-            float tileSize = 16.9f;
+            float tileSize = 16f;
 
             int atlasIndex = 1 + 5 * imagesPerRow;
 
@@ -146,6 +149,8 @@ namespace Rogue
             Raylib.DrawTextureRec(Sprite, imageRect, pixelPosition, Raylib.WHITE);
 
         }
+
+
         public void LoadEnemiesAndItems()
         {
             enemies = new List<Enemy>();
@@ -236,5 +241,37 @@ namespace Rogue
                 }
             }
         }
+
+
+        public Enemy? GetEnemyAt(Point2D position)
+        {
+            foreach (var Enemy in enemies)
+            {
+  
+                Vector2 Playerv2 = new Vector2(position.x, position.y);
+                Vector2 Enemyv2 = new Vector2(Enemy.position.x, Enemy.position.y);
+                if (Playerv2 == Enemyv2)
+                {
+                    Console.WriteLine("Enemy Found");
+                    return Enemy;
+                }
+            }
+            return null;
+        }
+        public Item? GetItemAt(Point2D position) 
+        {
+            foreach (var Item in items)
+            {
+                Vector2 Playerv2 = new Vector2(position.x, position.y);
+                Vector2 Itemv2 = new Vector2(Item.position.x, Item.position.y);
+                if (Playerv2 == Itemv2)
+                {
+                    Console.WriteLine("Item Found");
+                    return Item;
+                }
+            }
+            return null;
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
 using System.Threading;
+using TurboMapReader;
 using ZeroElectric.Vinculum;
+
 
 namespace Rogue
 {
@@ -128,8 +130,9 @@ namespace Rogue
         private void Init()
         {
             player = CreateCharacter();
-            MapLoader loader = new MapLoader();
-            level01 = loader.LoadMapFromFile("Maps/mapfile.json");
+            MapLoader Reader = new MapLoader();
+            level01 = Reader.LoadMapFromFile("mapfile.json");
+            TiledMap loadedTileMap = MapReader.LoadMapFromFile("mapfile.json");
             player.Map = level01.layers[0].mapTiles;
             player.MapWidth = level01.mapWidth;
             player.position = new Point2D(1, 1);
@@ -155,11 +158,12 @@ namespace Rogue
         private void DrawGame()
         {
             Raylib.BeginDrawing();
-
             level01.DrawMap();
             player.Draw();
-
             Raylib.EndDrawing();
+
+
+
         }
 
         private void DrawGameToTexture()
@@ -168,8 +172,6 @@ namespace Rogue
             DrawGame();
             Raylib.EndTextureMode();
             DrawGameScaled();
-
-
         }
 
         private void UpdateGame()
@@ -205,9 +207,7 @@ namespace Rogue
             {
                 UpdateGame();
                 DrawGameToTexture();
-
             }
-
         }
 
         private void DrawGameScaled()
@@ -221,8 +221,7 @@ namespace Rogue
             int draw_height = Raylib.GetScreenHeight();
             float scale = Math.Min((float)draw_width / game_width, (float)draw_height / game_height);
 
-            // Note: when drawing on texture, the Y-axis is
-            //flipped, need to multiply height by -1
+
             Rectangle source = new Rectangle(0.0f, 0.0f,
                 game_screen.texture.width,
                 game_screen.texture.height * -1.0f);
