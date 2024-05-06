@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TurboMapReader\TurboMapReader.csproj" />
+    <ProjectReference Include="TurboMapReader-main\TurboMapReader.csproj" />
   </ItemGroup>
 
 </Project>

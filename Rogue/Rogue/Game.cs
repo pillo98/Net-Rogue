@@ -130,9 +130,8 @@ namespace Rogue
         private void Init()
         {
             player = CreateCharacter();
-            MapLoader Reader = new MapLoader();
+            MapReader Reader = new MapReader();
             level01 = Reader.LoadMapFromFile("mapfile.json");
-            TiledMap loadedTileMap = MapReader.LoadMapFromFile("mapfile.json");
             player.Map = level01.layers[0].mapTiles;
             player.MapWidth = level01.mapWidth;
             player.position = new Point2D(1, 1);
