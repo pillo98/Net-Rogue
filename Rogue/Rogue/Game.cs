@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System.Threading;
-using TurboMapReader;
 using ZeroElectric.Vinculum;
+using TurboMapReader;
 
 
 namespace Rogue
@@ -12,11 +12,15 @@ namespace Rogue
         int screen_height = 720;
 
         PlayerCharacter player;
-        MapS level01;
+        Map level01;
+        TiledMap level;
         public static readonly int tileSize = 16;
         int game_width;
         int game_height;
         RenderTexture game_screen;
+        public static Sound EnemySound;
+        public static Sound ItemSound;
+        public static Sound WallCollide;
         public static Texture atlasImage;
         private string AskName()
         {
@@ -130,28 +134,40 @@ namespace Rogue
         private void Init()
         {
             player = CreateCharacter();
-            MapReader Reader = new MapReader();
-            level01 = Reader.LoadMapFromFile("mapfile.json");
-            player.Map = level01.layers[0].mapTiles;
-            player.MapWidth = level01.mapWidth;
-            player.position = new Point2D(1, 1);
+
+            player.position = new Point2D(2, 2);
             Console.Clear();
 
-            Raylib.SetTargetFPS(30);
+            Raylib.InitAudioDevice();
             Raylib.InitWindow(screen_width, screen_height, "Rogue");
+            Raylib.SetTargetFPS(30);
             Raylib.SetWindowState(ConfigFlags.FLAG_WINDOW_RESIZABLE);
+
+            EnemySound = Raylib.LoadSound("Sounds/Enemy.mp3");
+            ItemSound = Raylib.LoadSound("Sounds/Item.mp3");
+            WallCollide = Raylib.LoadSound("Sounds/WallCollide.mp3");
+
+
+
+            MapLoader Reader = new MapLoader();
+            level01 = Reader.LoadLayeredMap("Maps/mapfile.json");
+            level = MapReader.LoadMapFromFile("Maps/mapfile.json");
+
+            Reader.ToMap(level01, level);
 
             atlasImage = Raylib.LoadTexture("Images/MAP.png");
 
             player.SetImageAndIndex(atlasImage, 12, 96);
 
             game_width = 480;
-            game_height = 270;
+            game_height = 360;
+
+            player.MapWidth = level01.mapWidth;
+            player.MapTiles = level01.layers[0].mapTiles;
 
             game_screen = Raylib.LoadRenderTexture(game_width, game_height);
-            Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_BILINEAR);
+            Raylib.SetTextureFilter(game_screen.texture, TextureFilter.TEXTURE_FILTER_POINT);
             Raylib.SetWindowMinSize(game_width, game_height);
-
         }
 
         private void DrawGame()
@@ -184,19 +200,28 @@ namespace Rogue
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
             {
                 player.Move(0, -1);
+                level01.GetEnemyAt(player.position);
+                level01.GetItemAt(player.position);
             }
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_DOWN))
             {
                 player.Move(0, 1);
+                level01.GetEnemyAt(player.position);
+                level01.GetItemAt(player.position);
             }
 
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
             {
                 player.Move(1, 0);
+                level01.GetEnemyAt(player.position);
+                level01.GetItemAt(player.position);
             }
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
             {
                 player.Move(-1, 0);
+                level01.GetEnemyAt(player.position);
+                level01.GetItemAt(player.position);
+
             }
         }
 

@@ -24,7 +24,7 @@ namespace Rogue
         public Point2D position;
         public Point2D LastPosition;
         public int NextPosition;
-        public int[] Map;
+        public int[] MapTiles;
         public int Numero;
         public int MapWidth;
 
@@ -37,8 +37,10 @@ namespace Rogue
             position.x += x_move;
             position.y += y_move;
             NextPosition = position.x + position.y * MapWidth;
-            Numero = Map[NextPosition];
-            if (Numero == 5)
+            Numero = MapTiles[NextPosition];
+            int tileId = Numero;
+            List<int> FloorTileNumbers = new List<int> { 52, 51, 49, 50, 31, 40, 43, 34};
+            if (FloorTileNumbers.Contains(tileId))
             {
 
                 LastPosition.x = position.x - x_move;
@@ -49,9 +51,13 @@ namespace Rogue
 
 
 
+
+
+
             }
             else
             {
+                Raylib.PlaySound(Game.WallCollide);
                 position.x -= x_move;
                 position.y -= y_move;
             }

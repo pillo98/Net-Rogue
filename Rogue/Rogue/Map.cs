@@ -12,31 +12,14 @@ using TurboMapReader;
 
 namespace Rogue
 {
-    internal class MapS
+    internal class Map
     {
         public int mapWidth;
         public MapLayer[] layers;
 
-        public enum MapTile : int
-        {
-            Floor = 5,
-            Wall = 8
-        }
-
 
         List<Enemy>? enemies;
         List<Item>? items;
-
-        public Tile Floor;
-        public Tile Wall;
-        public struct Tile
-        {
-            public Texture Image { get; set; }
-            public float imagePixelX;
-            public float imagePixelY;
-            public Rectangle imageRect;
-            public int index;
-        }
 
 
         public struct Enemy
@@ -63,27 +46,26 @@ namespace Rogue
             }
 
         }
-        public Tile SetImageAndIndex(Tile tile, int index)
+
+        public Rectangle SetIndex(int imagesPerRow, int index)
         {
             float tileSize = 16f;
-            tile.Image = Game.atlasImage;
-            tile.index = index;
-            tile.imagePixelX = (tile.index % 12) * tileSize;
-            tile.imagePixelY = (int)(tile.index / 12) * tileSize;
+            float imagePixelX = index % imagesPerRow * tileSize;
+            float imagePixelY = (int)(index / imagesPerRow) * tileSize;
 
-            tile.imageRect = new Rectangle(tile.imagePixelX, tile.imagePixelY, Game.tileSize, Game.tileSize);
-            return tile;
+            Rectangle imageRect = new Rectangle(imagePixelX, imagePixelY, Game.tileSize, Game.tileSize);
+
+            return imageRect;
         }
 
 
         public void DrawMap()
         {
-            
+
             MapLayer groundLayer = layers[0];
-            Floor = SetImageAndIndex(Floor, 0);
-            Wall = SetImageAndIndex(Wall, 14);
+
             int[] groundTiles = groundLayer.mapTiles;
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Texture Image = Game.atlasImage;
             int mapHeight = groundTiles.Length / mapWidth;
             for (int y = 0; y < mapHeight; y++)
             {
@@ -91,17 +73,8 @@ namespace Rogue
                 {
                     int tileId = groundTiles[x + y * mapWidth];
                     Vector2 pos = new Vector2(x * Game.tileSize, y * Game.tileSize);
-                    switch (tileId) 
-                    { 
-                        case 0: 
-                            break;
-                        case 5:
-                            Raylib.DrawTextureRec(Floor.Image, Floor.imageRect, pos, Raylib.WHITE);
-                            break;
-                        case 8:
-                            Raylib.DrawTextureRec(Wall.Image, Wall.imageRect, pos, Raylib.WHITE);
-                            break;
-                    }
+                    Rectangle rect = SetIndex(12, tileId - 1);
+                    Raylib.DrawTextureRec(Image, rect, pos, Raylib.WHITE);
                 }
             }
             LoadEnemiesAndItems();
@@ -165,29 +138,26 @@ namespace Rogue
                 for (int x = 0; x < mapWidth; x++)
                 {
                     Point2D position = new Point2D(x, y);
+                    Vector2 Enemypos = new Vector2(x * Game.tileSize, y * Game.tileSize);
                     int index = x + y * mapWidth;
-                    int tileId = enemyTiles[index];
-                    switch (tileId)
+                    int EnemytileId = enemyTiles[index];
+                    switch (EnemytileId)
                     {
                         case 0:
                             // ei mitään tässä kohtaa
                             break;
-                        case 1:
-                            enemies.Add(new Enemy("Orc", position, enemy_image));
-                            DrawEnemy(enemy_image, position);
+                        case 121:
+                            enemies.Add(new Enemy("Bat", position, enemy_image));
                             break;
-                        case 2:
-                            enemies.Add(new Enemy("Goblin", position, enemy_image));
-                            DrawEnemy(enemy_image, position);
+                        case 109:
+                            enemies.Add(new Enemy("Ghost", position, enemy_image));
                             break;
-                        case 3:
-                            enemies.Add(new Enemy("Wraith", position, enemy_image));
-                            DrawEnemy(enemy_image, position);
-                            break;
-                        case 4:
-                            enemies.Add(new Enemy("Bandit", position, enemy_image));
-                            DrawEnemy(enemy_image, position);
-                            break;
+                    }
+                    if (EnemytileId != 0)
+                    {
+
+                        Rectangle Enemyrect = SetIndex(12, EnemytileId - 1);
+                        Raylib.DrawTextureRec(enemy_image, Enemyrect, Enemypos, Raylib.WHITE);
                     }
                 }
             }
@@ -204,9 +174,10 @@ namespace Rogue
                 for (int x = 0; x < mapWidth; x++)
                 {
                     Point2D position = new Point2D(x, y);
+                    Vector2 Itempos = new Vector2(x * Game.tileSize, y * Game.tileSize);
                     int index = x + y * mapWidth;
-                    int tileId = itemTiles[index];
-                    switch (tileId)
+                    int ItemtileId = itemTiles[index];
+                    switch (ItemtileId)
                     {
 
                         case 0:
@@ -214,29 +185,34 @@ namespace Rogue
                             break;
                         case 1:
                             items.Add(new Item("Sword", position, item_image));
-                            DrawItem(item_image, position);
                             break;
                         case 2:
                             items.Add(new Item("Spear", position, item_image));
-                            DrawItem(item_image, position);
                             break;
                         case 3:
                             items.Add(new Item("Ring", position, item_image));
-                            DrawItem(item_image, position);
                             break;
                         case 4:
                             items.Add(new Item("Armor", position, item_image));
-                            DrawItem(item_image, position);
                             break;
                         case 5:
                             items.Add(new Item("Shield", position, item_image));
-                            DrawItem(item_image, position);
                             break;
                         case 6:
                             items.Add(new Item("Helmet", position, item_image));
-                            DrawItem(item_image, position);
+                            break;
+                        case 62:
+                            items.Add(new Item("ItemBox", position, item_image));
                             break;
 
+
+
+                    }
+                    if (ItemtileId != 0)
+                    {
+
+                        Rectangle Enemyrect = SetIndex(12, ItemtileId - 1);
+                        Raylib.DrawTextureRec(enemy_image, Enemyrect, Itempos, Raylib.WHITE);
                     }
                 }
             }
@@ -253,6 +229,7 @@ namespace Rogue
                 if (Playerv2 == Enemyv2)
                 {
                     Console.WriteLine("Enemy Found");
+                    Raylib.PlaySound(Game.EnemySound);
                     return Enemy;
                 }
             }
@@ -267,6 +244,7 @@ namespace Rogue
                 if (Playerv2 == Itemv2)
                 {
                     Console.WriteLine("Item Found");
+                    Raylib.PlaySound(Game.ItemSound);
                     return Item;
                 }
             }

@@ -28,17 +28,28 @@
     <None Update="mapfile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="RogueTiledMap.json">
+    <None Update="Maps\mapfile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Maps\RogueTiledMap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Maps\RogueTiledMap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\Enemy.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\Item.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\WallCollide.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Maps\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="TurboMapReader-main\TurboMapReader.csproj" />
+    <ProjectReference Include="..\..\TurboMapReader\TurboMapReader-main\TurboMapReader.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,13 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
+using TurboMapReader;
+
 namespace Rogue
 {
     internal class MapLoader
     {
-        public MapS LoadTestMap()
+        public Map LoadTestMap()
         {
-            MapS test = new MapS();
+            Map test = new Map();
             test.mapWidth = 8;
             test.layers[0].mapTiles = new int[] {
             2, 2, 2, 2, 2, 2, 2, 2,
@@ -47,9 +49,9 @@ namespace Rogue
             }
         }
         
-        public MapS LoadMapFromFile(string filename) 
+        public Map LoadLayeredMap(string filename) 
         {
-            MapS map = new MapS();
+            Map map = new Map();
             bool fileFound = File.Exists(filename);
             if (fileFound == false)
             {
@@ -59,8 +61,25 @@ namespace Rogue
             using (StreamReader reader = File.OpenText(filename))
             {
                 var fileContents = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<MapS>(fileContents);
+                return JsonConvert.DeserializeObject<Map>(fileContents);
             }
+        }
+
+        public Map ToMap(Map map, TiledMap Tmap)
+        {
+            map.layers[0].name = Tmap.GetLayerByName("ground").name;
+            map.layers[0].mapTiles = Tmap.GetLayerByName("ground").data;
+
+            map.layers[1].name = Tmap.GetLayerByName("items").name;
+            map.layers[1].mapTiles = Tmap.GetLayerByName("items").data;
+
+            map.layers[2].name = Tmap.GetLayerByName("enemies").name;
+            map.layers[2].mapTiles = Tmap.GetLayerByName("enemies").data;
+
+            map.mapWidth = Tmap.width;
+
+            return map;
+
         }
     }
 }
