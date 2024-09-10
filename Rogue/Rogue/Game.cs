@@ -2,6 +2,8 @@
 using System.Threading;
 using ZeroElectric.Vinculum;
 using TurboMapReader;
+using RayGuiCreator;
+using System.Xml.Linq;
 
 
 namespace Rogue
@@ -22,6 +24,19 @@ namespace Rogue
         public static Sound ItemSound;
         public static Sound WallCollide;
         public static Texture atlasImage;
+
+        enum GameState
+        {
+            MainMenu,
+            CharacterCreation,
+            GameLoop
+        }
+
+        GameState currentGameState;
+        TextBoxEntry playerNameEntry;
+        bool IsNameOk = false;
+        public MultipleChoiceEntry classChoices = new MultipleChoiceEntry(new string[] {Class.Rogue.ToString(), Class.Warrior.ToString(), Class.Mage.ToString()});
+        public MultipleChoiceEntry raceChoices = new MultipleChoiceEntry(new string[] { Race.Human.ToString(),Race.Elf.ToString(), Race.Orc.ToString()});
         private string AskName()
         {
 
@@ -111,16 +126,10 @@ namespace Rogue
                     Console.WriteLine("That is not a Class");
                     continue;
                 }
+                player.name = AskName();
+                player.race = AskRace();
+                player.Role = AskRole();
             }
-        }
-
-        private PlayerCharacter CreateCharacter() 
-        {
-            PlayerCharacter player = new PlayerCharacter();
-            player.name = AskName();
-            player.race = AskRace();
-            player.Role = AskRole();
-            return player;
         }
 
         public void Run()
@@ -133,7 +142,9 @@ namespace Rogue
 
         private void Init()
         {
-            player = CreateCharacter();
+            currentGameState = GameState.MainMenu;
+            player = new PlayerCharacter();
+            playerNameEntry = new TextBoxEntry(12);
 
             player.position = new Point2D(2, 2);
             Console.Clear();
@@ -172,10 +183,8 @@ namespace Rogue
 
         private void DrawGame()
         {
-            Raylib.BeginDrawing();
             level01.DrawMap();
             player.Draw();
-            Raylib.EndDrawing();
 
 
 
@@ -192,10 +201,6 @@ namespace Rogue
         private void UpdateGame()
         {
             Console.CursorVisible = false;
-            if (Console.KeyAvailable == false)
-            {
-                Thread.Sleep(33);
-            }
 
             if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
             {
@@ -229,8 +234,21 @@ namespace Rogue
         {
             while (Raylib.WindowShouldClose() == false)
             {
-                UpdateGame();
-                DrawGameToTexture();
+                switch (currentGameState)
+                {
+                    case GameState.MainMenu:
+                        DrawMainMenu();
+                        break;
+                    case GameState.CharacterCreation:
+                        DrawCharacterMenu();
+                        break;
+
+                    case GameState.GameLoop:
+                        UpdateGame();
+                        DrawGameToTexture();
+                        break;
+                }
+
             }
         }
 
@@ -262,6 +280,136 @@ namespace Rogue
 
             Raylib.EndDrawing();
         }
+
+        public void DrawMainMenu()
+        {
+            // Tyhjennä ruutu ja aloita piirtäminen
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.BLACK);
+
+            // Laske ylimmän napin paikka ruudulla.
+            int button_width = 100;
+            int button_height = 20;
+            int button_x = Raylib.GetScreenWidth() / 2 - button_width / 2;
+            int button_y = Raylib.GetScreenHeight() / 2 - button_height / 2;
+
+            // Piirrä pelin nimi nappien yläpuolelle
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 3, button_width, button_height), "Rogue");
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Move with arrow keys");
+            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Start Game") == 1)
+            {
+                currentGameState = GameState.GameLoop;
+            }
+
+            button_y += button_height * 2;
+            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Create Character") == 1)
+            {
+                currentGameState = GameState.CharacterCreation;
+            }
+
+            button_y += button_height * 2;
+            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Quit") == 1)
+            {
+                Raylib.CloseWindow();
+            }
+
+            Raylib.EndDrawing();
+        }
+
+        public void DrawCharacterMenu()
+        {
+            
+            // Tyhjennä ruutu ja aloita piirtäminen
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.BLACK);
+            int x = 0;
+            int y = 40;
+            int width = 140;
+            MenuCreator c = new MenuCreator(Raylib.GetScreenWidth() / 2 - width / 2, y, width);
+            string playername;
+            c.Label("Character creation");
+            c.Label("");
+            c.Label("Character Name:");
+            c.TextBox(playerNameEntry);
+            c.Label("");
+            c.Label("Character Race:");
+            c.ToggleGroup(raceChoices);
+            c.Label("");
+            c.Label("Character Class");
+            c.ToggleGroup(classChoices);
+            c.Label("");
+            c.Label("");
+            if(c.LabelButton("Create Character"))
+            {
+                playername = playerNameEntry.bytes.ToString();
+
+                CheckIfNameOK(playername, IsNameOk);
+                if (IsNameOk == true) 
+                {
+                    player.name = playername;
+                    switch (raceChoices.GetSelected())
+                    {
+                        case "Human":
+                            player.race = Race.Human; 
+                            break;
+                        case "Elf":
+                            player.race = Race.Elf;
+                            break;
+                        case "Orc":
+                            player.race = Race.Orc;
+                            break;
+
+                    }
+                    switch (classChoices.GetSelected())
+                    {
+                        case "Rogue":
+                            player.Role = Class.Rogue;
+                            break;
+                        case "Warrior":
+                            player.Role = Class.Warrior;
+                            break;
+                        case "Mage":
+                            player.Role = Class.Mage;
+                            break;
+
+                    }
+                    currentGameState = GameState.GameLoop;
+
+                }
+                
+            }
+            c.EndMenu();
+
+            
+
+            Raylib.EndDrawing();
+        }
+
+        public string CheckIfNameOK(string name, bool IsNameOK)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                Console.WriteLine("Not acceptable");
+            }
+            bool nameOK = true;
+            for (int i = 0; i < name.Length; i++)
+            {
+                char kirjain = name[i];
+                if (Char.IsLetter(kirjain) != true)
+                {
+                    nameOK = false;
+                }
+            }
+            if (nameOK == false)
+            {
+                Console.WriteLine("Name can only contain letters!");
+            }
+            IsNameOK = nameOK;
+            return name;
+
+        }
+
+
     }
 
 }

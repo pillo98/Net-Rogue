@@ -39,7 +39,7 @@ namespace Rogue
             NextPosition = position.x + position.y * MapWidth;
             Numero = MapTiles[NextPosition];
             int tileId = Numero;
-            List<int> FloorTileNumbers = new List<int> { 52, 51, 49, 50, 31, 40, 43, 34};
+            List<int> FloorTileNumbers = new List<int> { 52, 51, 49, 50, 31, 40, 43, 34, 53};
             if (FloorTileNumbers.Contains(tileId))
             {
 
