@@ -24,114 +24,23 @@ namespace Rogue
         public static Sound ItemSound;
         public static Sound WallCollide;
         public static Texture atlasImage;
-
-        enum GameState
+        OptionsMenu myOptionsMenu;
+        PauseMenu myPauseMenu;
+        Stack<GameState> stateStack = new Stack<GameState>();
+        public enum GameState
         {
             MainMenu,
             CharacterCreation,
-            GameLoop
+            GameLoop,
+            PauseMenu,
+            OptionsMenu
         }
 
-        GameState currentGameState;
+        public GameState currentGameState;
         TextBoxEntry playerNameEntry;
-        bool IsNameOk = false;
+        bool IsNameOk;
         public MultipleChoiceEntry classChoices = new MultipleChoiceEntry(new string[] {Class.Rogue.ToString(), Class.Warrior.ToString(), Class.Mage.ToString()});
         public MultipleChoiceEntry raceChoices = new MultipleChoiceEntry(new string[] { Race.Human.ToString(),Race.Elf.ToString(), Race.Orc.ToString()});
-        private string AskName()
-        {
-
-            while (true)
-            {
-                Console.WriteLine("What is your name?");
-                string name = Console.ReadLine();
-                if (String.IsNullOrEmpty(name))
-                {
-                    Console.WriteLine("Not acceptable");
-                    continue;
-                }
-                bool nameOK = true;
-                for (int i = 0; i < name.Length; i++)
-                {
-                    char kirjain = name[i];
-                    if (Char.IsLetter(kirjain) == false)
-                    {
-                        nameOK = false;
-                        
-
-                    }
-                }
-                if (nameOK == false)
-                {
-                    Console.WriteLine("Name can only contain letters!");
-                    continue;
-                }
-                return name;
-            }
-        }
-
-        private Race AskRace()
-        {
-            while (true)
-            {
-                Console.WriteLine("Select race");
-                Console.WriteLine(Race.Human.ToString());
-                Console.WriteLine(Race.Elf.ToString());
-                Console.WriteLine(Race.Orc.ToString());
-                string race = Console.ReadLine();
-                if (race == Race.Human.ToString())
-                {
-                    return Race.Human;
-                }
-                else if (race == Race.Elf.ToString())
-                {
-                    return Race.Elf;
-                }
-                else if (race == Race.Orc.ToString())
-                {
-                    return Race.Orc;
-                }
-                else
-                {
-                    Console.WriteLine("That is not a Race");
-                    continue;
-                }
-            }
-        }
-
-        private Class AskRole() 
-        {
-            while (true)
-            {
-
-
-                Console.WriteLine("Select Class");
-                Console.WriteLine(Class.Rogue.ToString());
-                Console.WriteLine(Class.Warrior.ToString());
-                Console.WriteLine(Class.Mage.ToString());
-                string Role = Console.ReadLine();
-                if (Role == Class.Rogue.ToString())
-                {
-                    return Class.Rogue;
-                }
-                else if (Role == Class.Warrior.ToString())
-                {
-                    return Class.Warrior;
-                }
-                else if (Role == Class.Mage.ToString())
-                {
-                    return Class.Mage;
-                }
-                else
-                {
-                    Console.WriteLine("That is not a Class");
-                    continue;
-                }
-                player.name = AskName();
-                player.race = AskRace();
-                player.Role = AskRole();
-            }
-        }
-
         public void Run()
         {
             Init();
@@ -142,12 +51,18 @@ namespace Rogue
 
         private void Init()
         {
-            currentGameState = GameState.MainMenu;
+            ChangeState(GameState.MainMenu);
             player = new PlayerCharacter();
             playerNameEntry = new TextBoxEntry(12);
-
+            myOptionsMenu = new OptionsMenu();
+            myPauseMenu = new PauseMenu();
             player.position = new Point2D(2, 2);
-            Console.Clear();
+            
+            myOptionsMenu.BackButtonPressedEvent += this.OnOptionsBackButtonPressed;
+            myPauseMenu.BackButtonPressedEvent += this.OnPauseBackButtonPressed;
+            myPauseMenu.OptionsButtonPressedEvent += this.OnPauseOptionsButtonPressed;
+            myPauseMenu.MainMenuButtonPressedEvent += this.OnPauseMainMenuPressed;
+
 
             Raylib.InitAudioDevice();
             Raylib.InitWindow(screen_width, screen_height, "Rogue");
@@ -228,13 +143,18 @@ namespace Rogue
                 level01.GetItemAt(player.position);
 
             }
+            if (Raylib.IsKeyPressed(KeyboardKey.KEY_TAB))
+            {
+                ChangeState(GameState.PauseMenu);
+
+            }
         }
 
         private void GameLoop()
         {
             while (Raylib.WindowShouldClose() == false)
             {
-                switch (currentGameState)
+                switch (stateStack.Peek())
                 {
                     case GameState.MainMenu:
                         DrawMainMenu();
@@ -246,6 +166,12 @@ namespace Rogue
                     case GameState.GameLoop:
                         UpdateGame();
                         DrawGameToTexture();
+                        break;
+                    case GameState.PauseMenu:
+                        myPauseMenu.DrawMenu();
+                        break;
+                    case GameState.OptionsMenu:
+                        myOptionsMenu.DrawMenu();
                         break;
                 }
 
@@ -295,16 +221,21 @@ namespace Rogue
 
             // Piirrä pelin nimi nappien yläpuolelle
             RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 3, button_width, button_height), "Rogue");
-            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Move with arrow keys");
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Move: arrow keys");
             if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Start Game") == 1)
             {
-                currentGameState = GameState.GameLoop;
+                ChangeState(GameState.GameLoop);
             }
 
             button_y += button_height * 2;
             if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Create Character") == 1)
             {
-                currentGameState = GameState.CharacterCreation;
+                ChangeState(GameState.CharacterCreation);
+            }
+            button_y += button_height * 2;
+            if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Options") == 1)
+            {
+                ChangeState(GameState.OptionsMenu);
             }
 
             button_y += button_height * 2;
@@ -341,9 +272,9 @@ namespace Rogue
             c.Label("");
             if(c.LabelButton("Create Character"))
             {
-                playername = playerNameEntry.bytes.ToString();
+                playername = playerNameEntry.ToString();
 
-                CheckIfNameOK(playername, IsNameOk);
+                CheckIfNameOK(playername);
                 if (IsNameOk == true) 
                 {
                     player.name = playername;
@@ -373,7 +304,7 @@ namespace Rogue
                             break;
 
                     }
-                    currentGameState = GameState.GameLoop;
+                    ChangeState(GameState.GameLoop);
 
                 }
                 
@@ -385,30 +316,48 @@ namespace Rogue
             Raylib.EndDrawing();
         }
 
-        public string CheckIfNameOK(string name, bool IsNameOK)
+        public string CheckIfNameOK(string name)
         {
-            if (String.IsNullOrEmpty(name))
-            {
-                Console.WriteLine("Not acceptable");
-            }
-            bool nameOK = true;
-            for (int i = 0; i < name.Length; i++)
+            IsNameOk = true;
+            for (int i = 0; i < name.Length - 1; i++)
             {
                 char kirjain = name[i];
-                if (Char.IsLetter(kirjain) != true)
+                if (Char.IsLetter(kirjain) != true && Char.IsControl(kirjain) != true) 
                 {
-                    nameOK = false;
+                    IsNameOk = false;
                 }
+ 
             }
-            if (nameOK == false)
+            if (IsNameOk == false)
             {
                 Console.WriteLine("Name can only contain letters!");
             }
-            IsNameOK = nameOK;
             return name;
 
         }
 
+        void OnOptionsBackButtonPressed(object sender, EventArgs args)
+        {
+            stateStack.Pop();
+        }
+        void OnPauseMainMenuPressed(object sender, EventArgs args)
+        {
+            ChangeState(GameState.MainMenu);
+        }
+        void OnPauseBackButtonPressed(object sender, EventArgs args)
+        {
+            stateStack.Pop();
+        }
+        void OnPauseOptionsButtonPressed(object sender, EventArgs args)
+        {
+            ChangeState(GameState.OptionsMenu);
+        }
+
+        void ChangeState(GameState gameState)
+        {
+            currentGameState = gameState;
+            stateStack.Push(currentGameState);
+        }
 
     }
 

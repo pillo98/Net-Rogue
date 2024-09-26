@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rogue", "Rogue\Rogue.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TurboMapReader", "..\TurboMapReader\TurboMapReader-main\TurboMapReader.csproj", "{11B63AF1-9690-42BB-B144-35D499C5DAC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RayGuiCreator", "..\RayGuiCreator-main\RayGuiCreator-main\RayGuiCreator\RayGuiCreator.csproj", "{43CBF255-A0D2-437A-9BDD-7FBD7493AB0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RayGuiCreator", "..\..\RayGuiCreator-main\RayGuiCreator-main\RayGuiCreator\RayGuiCreator.csproj", "{898B7FFE-A1E3-4875-B2A4-170E515DF667}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{11B63AF1-9690-42BB-B144-35D499C5DAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11B63AF1-9690-42BB-B144-35D499C5DAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11B63AF1-9690-42BB-B144-35D499C5DAC1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43CBF255-A0D2-437A-9BDD-7FBD7493AB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43CBF255-A0D2-437A-9BDD-7FBD7493AB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43CBF255-A0D2-437A-9BDD-7FBD7493AB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43CBF255-A0D2-437A-9BDD-7FBD7493AB0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{898B7FFE-A1E3-4875-B2A4-170E515DF667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{898B7FFE-A1E3-4875-B2A4-170E515DF667}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{898B7FFE-A1E3-4875-B2A4-170E515DF667}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{898B7FFE-A1E3-4875-B2A4-170E515DF667}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

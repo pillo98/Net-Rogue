@@ -49,7 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RayGuiCreator-main\RayGuiCreator-main\RayGuiCreator\RayGuiCreator.csproj" />
+    <ProjectReference Include="..\..\..\RayGuiCreator-main\RayGuiCreator-main\RayGuiCreator\RayGuiCreator.csproj" />
     <ProjectReference Include="..\..\TurboMapReader\TurboMapReader-main\TurboMapReader.csproj" />
   </ItemGroup>
 
