@@ -220,8 +220,9 @@ namespace Rogue
             int button_y = Raylib.GetScreenHeight() / 2 - button_height / 2;
 
             // Piirrä pelin nimi nappien yläpuolelle
-            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 3, button_width, button_height), "Rogue");
-            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Move: arrow keys");
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 4, button_width, button_height), "Rogue");
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 3, button_width, button_height), "Move: arrow keys");
+            RayGui.GuiLabel(new Rectangle(button_x, button_y - button_height * 2, button_width, button_height), "Pause with TAB");
             if (RayGui.GuiButton(new Rectangle(button_x, button_y, button_width, button_height), "Start Game") == 1)
             {
                 ChangeState(GameState.GameLoop);
@@ -317,8 +318,13 @@ namespace Rogue
         }
 
         public string CheckIfNameOK(string name)
-        {
+        {   
+
             IsNameOk = true;
+            if (Char.IsLetter(name[0]) == false)
+            {
+                IsNameOk = false;
+            }   
             for (int i = 0; i < name.Length - 1; i++)
             {
                 char kirjain = name[i];
@@ -328,6 +334,7 @@ namespace Rogue
                 }
  
             }
+
             if (IsNameOk == false)
             {
                 Console.WriteLine("Name can only contain letters!");
@@ -356,6 +363,11 @@ namespace Rogue
         void ChangeState(GameState gameState)
         {
             currentGameState = gameState;
+            if (gameState == GameState.MainMenu)
+            {
+                stateStack.Clear();
+            }
+                
             stateStack.Push(currentGameState);
         }
 
